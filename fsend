@@ -1,0 +1,39 @@
+#!/bin/bash
+
+#   Copy to /usr/bin and don't forget to make the script executable
+#   Usage: fsend filenameORpath (or empty for current directory) 
+
+FILE=$1
+
+read -e -p $'\e[32mEnter downloads count (1 by default):\e[0m ' DOWNLOADS_COUNT
+
+read -e -p $'\e[32mRequire password (NO by default):\e[0m ' PASSWORD_REQUIRE
+
+if [ -z "$FILE" ]
+then
+    FILE=${PWD}
+else
+    if [ -f "$FILE" ]
+    then
+        read -e -p $'\e[32mRequire archive (NO by default):\e[0m ' ARCHIVE_REQUIRE
+    fi
+fi
+
+if [ -z "$DOWNLOADS_COUNT" ]
+then
+    DOWNLOADS_COUNT=1
+fi
+
+if [ ! -z "$PASSWORD_REQUIRE" ]
+then
+    PASSWORD_REQUIRE="--password"
+fi
+
+if [ ! -z "$ARCHIVE_REQUIRE" ]
+then
+    ARCHIVE_REQUIRE="--archive"
+fi
+
+
+
+ffsend upload --downloads ${DOWNLOADS_COUNT} ${ARCHIVE_REQUIRE} ${PASSWORD_REQUIRE} --copy ${FILE}

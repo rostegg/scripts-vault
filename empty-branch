@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#   Copy to /usr/bin and don't forget to make the script executable
+#   Usage: empty-branch <branch_name> ("assets" if empty) 
+
+BRANCH=$1
+
+if [ -z "$BRANCH" ]
+then
+    BRANCH="assets"
+fi
+echo ${BRANCH}
+git checkout --orphan ${BRANCH}
+git rm --cached -r .
+rm *

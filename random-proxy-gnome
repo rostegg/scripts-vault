@@ -1,0 +1,38 @@
+#!/bin/bash
+
+#   Copy to /usr/bin and don't forget to make the script executable
+#   Usage: random-proxy-gnome
+
+#   For removing proxy use: gsettings set org.gnome.system.proxy mode 'none'
+
+TEMP_PROXY_DATA=$(wget https://free-proxy-list.net/ -q -O - |  tr -d '[:space:]')
+
+TABLE=$(echo "$TEMP_PROXY_DATA" | grep -o -P '(?<=\<tr\>).*?(?=\<\/tr\>)')
+
+strADRRESES=$(echo "$TABLE" | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}')
+arrADDRESES=(${strADRRESES// / })
+
+strPORTS=$(echo "$TABLE" |grep -o -P '(?<=\<td\>)(\d+)(?=\<\/td\>)')
+arrPORTS=(${strPORTS// / })
+
+strHTTPS=$(echo "$TABLE" |grep -o -P "(?<=\<tdclass\='hx'\>)\w{2,3}(?=\<\/td\>)")
+arrHTTPS=(${strHTTPS// / })
+
+# random number from list
+rndSERVER=$(((RANDOM%${#arrPORTS[@]})-1))
+
+while [ ${arrHTTPS[$rndSERVER]} != "yes" ]
+do
+    rndSERVER=$(((RANDOM%${#arrPORTS[@]})-1))
+done
+
+
+gsettings set org.gnome.system.proxy mode 'manual' 
+gsettings set org.gnome.system.proxy.http host ${arrADDRESES[$rndSERVER]}
+gsettings set org.gnome.system.proxy.http port ${arrPORTS[$rndSERVER]}
+if [ ${arrHTTPS[$rndSERVER]} = "yes" ]
+then
+    gsettings set org.gnome.system.proxy.https host ${arrADDRESES[$rndSERVER]}
+    gsettings set org.gnome.system.proxy.https port ${arrPORTS[$rndSERVER]}
+fi
+gsettings set org.gnome.system.proxy ignore-hosts "['localhost', '127.0.0.0/8', '10.0.0.0/8', '192.168.0.0/16', '172.16.0.0/12']"

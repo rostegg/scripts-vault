@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#   Copy to /usr/bin and don't forget to make the script executable
+#   Usage: rnd-commit
+
+EMOJIS=(😺 😸 😹 😻 😼 😽 🙀 😿 😾 😂 😂 😝 😁 😱 👉 🙌 🍻 🔥 🌈 ☀ 🎈 🌹 💄 🎀 ⚽ 🎾 🏁 😡 👿 🐻 🐶 🐬 🐟 🍀 👀 🚗 🍎 💝 💙 👌 ❤ 😍 😉 😓 😳 💪 💩 🍸 🔑 💖 🌟 🎉 🌺 🎶 👠 🏈 ⚾ 🏆 👽 💀 🐵 🐮 🐩 🐎 💣 👃 👂 🍓 💘 💜 👊 💋 😘 😜 😵 🙏 👋 🚽 💃 💎 🚀 🌙 🎁 ⛄ 🌊 ⛵ 🏀 🎱 💰 👶 👸 🐰 🐷 🐍 🐫 🔫 👄 🚲 🍉 💛 💚)
+
+RANDOM_EMOJI() {
+  SELECTED_EMOJI=${EMOJIS[$RANDOM % ${#EMOJIS[@]}]};
+  echo $SELECTED_EMOJI;
+}
+
+COMMIT_EMOJI=$(RANDOM_EMOJI)
+
+git add .
+git commit -m "${COMMIT_EMOJI}"
