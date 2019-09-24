@@ -1,0 +1,136 @@
+#!/usr/bin/env python3
+
+from __future__ import print_function
+import sys
+import readline
+from os import environ
+import subprocess
+import os
+from urllib.request import Request, urlopen
+import json
+from pathlib import Path
+import yaml
+from collections import OrderedDict
+import argparse
+import re
+
+def represent_dictionary_order(self, dict_data):
+    return self.represent_mapping('tag:yaml.org,2002:map', dict_data.items())
+
+def setup_yaml():
+    yaml.add_representer(OrderedDict, represent_dictionary_order)
+
+setup_yaml()    
+
+home = str(Path.home())
+config_path = ('%s/%s')%(home,'.config/gclone.yaml')
+
+endpoint = 'https://api.github.com/users'
+headers = {'Accept': 'application/vnd.github.v3+json'}
+
+class Colors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+default_config = OrderedDict({'default_user': 'rostegg'})
+
+def read_config():
+    try:
+        with open(config_path, 'r') as config_stream:
+            try:
+                return { **default_config, **yaml.safe_load(config_stream)}
+            except yaml.YAMLError:
+                print("%s[!] Can't open local config file, seems it corrupted, creating new...%s"%(Colors.FAIL, Colors.ENDC))
+                create_config(default_config)
+                return default_config
+    except FileNotFoundError:
+        print("%s[!] Default config file not found, creating new...%s"%(Colors.WARNING, Colors.ENDC))
+        create_config(default_config)
+        return default_config        
+
+def create_config(config_data):
+    with open(config_path, 'w') as file:
+        file.write(yaml.dump(config_data))
+
+cfg = read_config()
+
+def git_status():
+    try:
+        with open(os.devnull, 'w') as null:
+            proc = subprocess.Popen("git", stdout=null, stderr=null)
+            proc.communicate()
+        return True
+    except OSError:
+        return False
+
+if (not(git_status())):
+    print("%s[!] Seems, like git not installed..%s"%(Colors.FAIL, Colors.ENDC))
+    exit(1)
+
+def push_to_repository(url):
+    try:
+        subprocess.check_output(["git", "push", url, "master"])
+    except subprocess.CalledProcessError:
+        print("%s[!] Error occured, while pushing to repository...%s"%(Colors.FAIL, Colors.ENDC))
+        exit(1)
+
+parser = argparse.ArgumentParser()
+parser.add_argument('repository_name', type=str, help='Repository name or regex for pulling', nargs='?', default=os.path.basename(os.getcwd()))
+parser.add_argument("--user", help="Github username",
+                    action="store")
+parser.add_argument("--set_user", help="Set github username as global variable",
+                    action="store")
+
+args = parser.parse_args()
+
+if (args.set_user):
+    cfg['default_user'] = args.set_user
+    create_config(cfg)
+    print("%s[+]%s Created new config for %s%s%s"%(Colors.OKGREEN, Colors.ENDC, Colors.OKBLUE, args.set_user, Colors.ENDC))
+    exit(1)
+
+current_user = args.user or cfg.get('default_user')
+
+def get_repositories_list(user = current_user):
+    url = ('%s/%s/repos')%(endpoint,user)
+
+    request = Request(url, headers=headers)
+    try:
+        response = urlopen(request).read()
+    except:
+        print("%s[!] Can't retrieve repositories list from Github...%s"%(Colors.FAIL,Colors.ENDC))
+        exit(1)
+    
+    json_response = json.loads(response.decode('utf-8'))
+    repositories_list = OrderedDict({ item['name']:item['clone_url'] for item in json_response })
+    return repositories_list
+
+def find_repository_link(repositories_list, required_repository):
+    search_list = repositories_list.keys()
+    for repository_name in search_list:
+        result = re.search(required_repository, repository_name)
+        if result is not None:
+            return repositories_list[repository_name]
+    return None
+            
+
+def main():
+    print()
+    print("%s[+]%s Retrieving repositories list for %s%s%s"%(Colors.OKGREEN, Colors.ENDC, Colors.OKBLUE, current_user, Colors.ENDC))
+    repositories_list = get_repositories_list()
+    url = find_repository_link(repositories_list, args.repository_name)
+    if url is None:
+        print("[!] Can't find repository by \"%s%s%s\" pattern."%(Colors.FAIL, args.repository_name, Colors.ENDC))
+        exit(1)
+    print("%s[+]%s Finded repository - %s%s%s, do you want to continue (press Enter)?"%(Colors.OKGREEN, Colors.ENDC, Colors.OKBLUE, url, Colors.ENDC))
+    input()
+    push_to_repository(url)
+    print("%s[+]%s Successfully pushed to %s%s%s"%(Colors.OKGREEN, Colors.ENDC, Colors.OKBLUE, url, Colors.ENDC))
+
+main()
