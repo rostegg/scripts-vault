@@ -123,7 +123,7 @@ def make_request(url):
     try:
         response = urlopen(request).read()
     except:
-        print("%s[!] Can't retrieve data from Github by url: %s%s"%(Colors.FAIL, url, Colors.ENDC))
+        print("%s[!] Can't retrieve data from Github by url: %s%s"%(Colors.FAIL, Colors.ENDC, url))
         exit(1)
     json_response = json.loads(response.decode('utf-8'))
     return json_response
