@@ -99,17 +99,34 @@ current_user = args.user or cfg.get('default_user')
 
 def get_repositories_list(user = current_user):
     url = ('%s/%s/repos')%(endpoint,user)
+    json_response = make_request(url)
+    repositories_list = OrderedDict({ item['name']:item['clone_url'] for item in json_response })
+    return repositories_list
 
+def get_user_orgs_names(user = current_user):
+    url = ('%s/%s/orgs')%(endpoint,user)
+    json_response = make_request(url)
+    oraginztions_names = [ item['login'] for item in json_response ]
+    return oraginztions_names
+
+def find_repository_in_orgs(required_repository):
+    orgs_list = get_user_orgs_names()
+    for org in orgs_list:
+        repo_list = get_repositories_list(org)
+        url = find_repository_link(repo_list, required_repository)
+        if url is not None:
+            return url
+    return None
+
+def make_request(url):
     request = Request(url, headers=headers)
     try:
         response = urlopen(request).read()
     except:
-        print("%s[!] Can't retrieve repositories list from Github...%s"%(Colors.FAIL,Colors.ENDC))
+        print("%s[!] Can't retrieve data from Github by url: %s%s"%(Colors.FAIL, url, Colors.ENDC))
         exit(1)
-    
     json_response = json.loads(response.decode('utf-8'))
-    repositories_list = OrderedDict({ item['name']:item['clone_url'] for item in json_response })
-    return repositories_list
+    return json_response
 
 def find_repository_link(repositories_list, required_repository):
     search_list = repositories_list.keys()
@@ -119,15 +136,23 @@ def find_repository_link(repositories_list, required_repository):
             return repositories_list[repository_name]
     return None
             
+def assert_repo(url, msg):
+    if url is None:
+        print(msg)    
+    return url is not None
 
 def main():
     print()
     print("%s[+]%s Retrieving repositories list for %s%s%s"%(Colors.OKGREEN, Colors.ENDC, Colors.OKBLUE, current_user, Colors.ENDC))
     repositories_list = get_repositories_list()
     url = find_repository_link(repositories_list, args.repository_name)
-    if url is None:
-        print("[!] Can't find repository by \"%s%s%s\" pattern."%(Colors.FAIL, args.repository_name, Colors.ENDC))
-        exit(1)
+    err_msg = "[!] Can't find repository by \"%s%s%s\" pattern in %s%s%s profile, searching in public organizations.."%(Colors.FAIL, args.repository_name, Colors.ENDC, Colors.OKBLUE, current_user, Colors.ENDC)
+    if not (assert_repo(url, err_msg)):
+        url = find_repository_in_orgs(args.repository_name)
+        err_msg = "[!] Can't find repository by \"%s%s%s\" pattern in public organizations.."%(Colors.FAIL, args.repository_name, Colors.ENDC)
+        if not assert_repo(url,err_msg):
+            exit(1)
+
     print("%s[+]%s Finded repository - %s%s%s, do you want to continue (press Enter)?"%(Colors.OKGREEN, Colors.ENDC, Colors.OKBLUE, url, Colors.ENDC))
     input()
     push_to_repository(url)
