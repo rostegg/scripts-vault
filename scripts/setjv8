@@ -7,4 +7,4 @@ sudo update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/ja
 JAVA_HOME_LOCAL="/usr/lib/jvm/java-8-openjdk-amd64/jre"
 sudo sed -i '/^JAVA_HOME/d' /etc/environment
 echo "JAVA_HOME=${JAVA_HOME_LOCAL}" | sudo tee -a /etc/environment > /dev/null
-source /etc/environment
+. /etc/environment
