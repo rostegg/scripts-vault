@@ -1,0 +1,27 @@
+AVAILABLE_IPS=($(nmap -sn 192.168.1.0/24 | grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}"))
+printf '\e[32mAvailable devices in network: \e[0m\n'
+printf ' %s\n' "${AVAILABLE_IPS[@]}"
+
+ADB_PORT=$1
+
+if [ -z "$ADB_PORT" ]
+then
+    ADB_PORT="5555"
+fi
+
+GOOD_RESPONSE="connected to"
+BAD_RESPONSE="unable"
+
+for IP in "${AVAILABLE_IPS[@]}"
+do
+printf "Trying connect to \e[32m${IP}\e[0m...\n"
+RESPONSE=$(adb connect ${IP}:${ADB_PORT})
+if [[ $RESPONSE == *${BAD_RESPONSE}* ]]; then
+  printf "\e[31mCan't connect to \e[0m${IP}:${ADB_PORT}\e[31m, maybe it's not evene adb device...\e[0m\n"
+fi
+if [[ $RESPONSE == *${GOOD_RESPONSE}* ]]; then
+  printf "\e[32mSuccessfully connected to \e[0m${IP}:${ADB_PORT}\n"
+fi
+done
+
+adb devices
