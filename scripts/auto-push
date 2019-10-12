@@ -98,7 +98,7 @@ if (args.set_user):
 current_user = args.user or cfg.get('default_user')
 
 def get_repositories_list(user = current_user):
-    url = ('%s/%s/repos')%(endpoint,user)
+    url = ('%s/%s/repos?per_page=1000')%(endpoint,user)
     json_response = make_request(url)
     repositories_list = OrderedDict({ item['name']:item['clone_url'] for item in json_response })
     return repositories_list
