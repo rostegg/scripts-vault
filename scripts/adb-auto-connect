@@ -1,8 +1,8 @@
 #!/bin/bash
-
-#   Copy to /usr/bin and don't forget to make the script executable
+#   Connect all available adb devices through local network (nmap required)
 #   Usage: adb-auto-connect <adb_port> ("5555" if empty) 
 
+#   Copy to /usr/bin and don't forget to make the script executable
 IP_TEMPLATE=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}' | grep -Eo '([0-9]*\.){3}' | grep -v '127.0.0')
 NETWORK_IP_WITH_MASK="${IP_TEMPLATE}0/24"
 printf "\e[32mStarting scan \e[0m${NETWORK_IP_WITH_MASK}\n"
@@ -25,7 +25,7 @@ do
 printf "Trying connect to \e[32m${IP}\e[0m...\n"
 RESPONSE=$(adb connect ${IP}:${ADB_PORT})
 if [[ $RESPONSE == *${BAD_RESPONSE}* ]]; then
-  printf "\e[31mCan't connect to \e[0m${IP}:${ADB_PORT}\e[31m, maybe it's not evene adb device...\e[0m\n"
+  printf "\e[31mCan't connect to \e[0m${IP}:${ADB_PORT}\e[31m, maybe it's not even adb device...\e[0m\n"
 fi
 if [[ $RESPONSE == *${GOOD_RESPONSE}* ]]; then
   printf "\e[32mSuccessfully connected to \e[0m${IP}:${ADB_PORT}\n"

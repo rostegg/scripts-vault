@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-
+# Search available repository on Github and push all changes
+# `auto-push --help` for more info
 from __future__ import print_function
 import sys
 import readline

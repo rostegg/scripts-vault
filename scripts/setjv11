@@ -1,8 +1,8 @@
 #!/bin/bash
-
-#   Copy to /usr/bin and don't forget to make the script executable
+#   Set java11 environment
 #   Usage: setjv11
 
+#   Copy to /usr/bin and don't forget to make the script executable
 sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java
 JAVA_HOME_LOCAL="/usr/lib/jvm/java-11-openjdk-amd64/"
 sudo sed -i '/^JAVA_HOME/d' /etc/environment

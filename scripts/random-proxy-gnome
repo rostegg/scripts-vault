@@ -1,10 +1,9 @@
 #!/bin/bash
-
-#   Copy to /usr/bin and don't forget to make the script executable
+#   Setup random proxy for Gnome Desktop from `free-proxy-list.net`
+#   For removing proxy use: gsettings set org.gnome.system.proxy mode 'none'
 #   Usage: random-proxy-gnome
 
-#   For removing proxy use: gsettings set org.gnome.system.proxy mode 'none'
-
+#   Copy to /usr/bin and don't forget to make the script executable
 TEMP_PROXY_DATA=$(wget https://free-proxy-list.net/ -q -O - |  tr -d '[:space:]')
 
 TABLE=$(echo "$TEMP_PROXY_DATA" | grep -o -P '(?<=\<tr\>).*?(?=\<\/tr\>)')

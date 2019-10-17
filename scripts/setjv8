@@ -1,8 +1,8 @@
 #!/bin/bash
-
-#   Copy to /usr/bin and don't forget to make the script executable
+#   Set java8 environment
 #   Usage: setjv8
 
+#   Copy to /usr/bin and don't forget to make the script executable
 sudo update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
 JAVA_HOME_LOCAL="/usr/lib/jvm/java-8-openjdk-amd64/jre"
 sudo sed -i '/^JAVA_HOME/d' /etc/environment
