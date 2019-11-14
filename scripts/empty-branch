@@ -1,8 +1,8 @@
 #!/bin/bash
 #   Create empty git branch
-#   Copy to /usr/bin and don't forget to make the script executable
 #   Usage: empty-branch <branch_name> ("assets" if empty) 
 
+#   Copy to /usr/bin and don't forget to make the script executable
 BRANCH=$1
 
 if [ -z "$BRANCH" ]
