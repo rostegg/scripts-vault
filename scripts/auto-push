@@ -160,7 +160,7 @@ def main():
             input()
             push_to_repository(url)
 
-    print("%s[+]%s Finded repository - %s%s%s, do you want to continue (press Enter)?"%(Colors.OKGREEN, Colors.ENDC, Colors.OKBLUE, url, Colors.ENDC))
+    print("%s[+]%s Found repository - %s%s%s, do you want to continue (press Enter)?"%(Colors.OKGREEN, Colors.ENDC, Colors.OKBLUE, url, Colors.ENDC))
     input()
     push_to_repository(url)
     print("%s[+]%s Successfully pushed to %s%s%s"%(Colors.OKGREEN, Colors.ENDC, Colors.OKBLUE, url, Colors.ENDC))
