@@ -25,10 +25,10 @@ do
 printf "Trying connect to \e[32m${IP}\e[0m...\n"
 RESPONSE=$(adb connect ${IP}:${ADB_PORT})
 if [[ $RESPONSE == *${BAD_RESPONSE}* ]]; then
-  printf "\e[31mCan't connect to \e[0m${IP}:${ADB_PORT}\e[31m, maybe it's not even adb device...\e[0m\n"
+    printf "\e[31mCan't connect to \e[0m${IP}:${ADB_PORT}\e[31m, maybe it's not even adb device...\e[0m\n"
 fi
 if [[ $RESPONSE == *${GOOD_RESPONSE}* ]]; then
-  printf "\e[32mSuccessfully connected to \e[0m${IP}:${ADB_PORT}\n"
+    printf "\e[32mSuccessfully connected to \e[0m${IP}:${ADB_PORT}\n"
 fi
 done
 

@@ -1,13 +1,25 @@
 #!/bin/bash
 #   Pull unrelated histories from remote repo
-#   Usage: pull-unrelated <url> (or origin if not specified)
+#   Usage: pull-unrelated <url||github_user_name>
+#   If provided 'github_user_name', repository name will be taken as the current folder name:
+#   "https://github.com/{github_user_name}/{current_folder}.git"
 
 #   Copy to /usr/bin and don't forget to make the script executable
-REPO_URL=$1
+REPO_DATA=$1
+VALID_URL_REGEX='(https)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]'
 
-if [ -z "$REPO_URL" ]
+if [ -z "$REPO_DATA" ]
 then
-    REPO_URL="origin"
+    printf "\e[31mNo parameter specified, please, read description (commands_list)[0m\n"
+    exit 1
 fi
 
-git pull ${REPO_URL} master --allow-unrelated-histories
+if ! [[ $REPO_DATA =~ $VALID_URL_REGEX ]]
+then
+    REPO_USER=$REPO_DATA
+    REPO_NAME=$(basename "$PWD")
+    REPO_DATA="https://github.com/${REPO_USER}/${REPO_NAME}.git"
+    printf "Target URL: \e[32m${REPO_DATA}\e[0m\n"
+fi
+
+git pull ${REPO_DATA} master --allow-unrelated-histories

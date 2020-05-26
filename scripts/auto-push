@@ -143,16 +143,22 @@ def assert_repo(url, msg):
     return url is not None
 
 def main():
+    target_repository = args.repository_name
     print()
     print("%s[+]%s Retrieving repositories list for %s%s%s"%(Colors.OKGREEN, Colors.ENDC, Colors.OKBLUE, current_user, Colors.ENDC))
     repositories_list = get_repositories_list()
-    url = find_repository_link(repositories_list, args.repository_name)
-    err_msg = "[!] Can't find repository by \"%s%s%s\" pattern in %s%s%s profile, searching in public organizations.."%(Colors.FAIL, args.repository_name, Colors.ENDC, Colors.OKBLUE, current_user, Colors.ENDC)
+    url = find_repository_link(repositories_list, target_repository)
+    err_msg = "[!] Can't find repository by \"%s%s%s\" pattern in %s%s%s profile, searching in public organizations.."%(Colors.FAIL, target_repository, Colors.ENDC, Colors.OKBLUE, current_user, Colors.ENDC)
     if not (assert_repo(url, err_msg)):
-        url = find_repository_in_orgs(args.repository_name)
-        err_msg = "[!] Can't find repository by \"%s%s%s\" pattern in public organizations.."%(Colors.FAIL, args.repository_name, Colors.ENDC)
+        url = find_repository_in_orgs(target_repository)
+        err_msg = "[!] Can't find repository by \"%s%s%s\" pattern in public organizations.."%(Colors.FAIL, target_repository, Colors.ENDC)
         if not assert_repo(url,err_msg):
-            exit(1)
+            # some weird trick, which allow to push to private repo and avoid auth
+            url = "https://github.com/%s/%s.git"%(current_user,target_repository)
+            print("%s[!]%s Ok, maybe repository is private, lets just commit to %s%s%s"%(Colors.WARNING, Colors.ENDC, Colors.OKBLUE, url, Colors.ENDC))
+            print("%s[!]%s Press %sEnter%s to continue.."%(Colors.WARNING, Colors.ENDC, Colors.OKGREEN, Colors.ENDC))
+            input()
+            push_to_repository(url)
 
     print("%s[+]%s Finded repository - %s%s%s, do you want to continue (press Enter)?"%(Colors.OKGREEN, Colors.ENDC, Colors.OKBLUE, url, Colors.ENDC))
     input()
