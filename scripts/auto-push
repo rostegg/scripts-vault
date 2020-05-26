@@ -156,11 +156,8 @@ def main():
             # some weird trick, which allow to push to private repo and avoid auth
             url = "https://github.com/%s/%s.git"%(current_user,target_repository)
             print("%s[!]%s Ok, maybe repository is private, lets just commit to %s%s%s"%(Colors.WARNING, Colors.ENDC, Colors.OKBLUE, url, Colors.ENDC))
-            print("%s[!]%s Press %sEnter%s to continue.."%(Colors.WARNING, Colors.ENDC, Colors.OKGREEN, Colors.ENDC))
-            input()
-            push_to_repository(url)
 
-    print("%s[+]%s Found repository - %s%s%s, do you want to continue (press Enter)?"%(Colors.OKGREEN, Colors.ENDC, Colors.OKBLUE, url, Colors.ENDC))
+    print("%s[+]%s Target repository - %s%s%s, do you want to continue (press Enter)?"%(Colors.OKGREEN, Colors.ENDC, Colors.OKBLUE, url, Colors.ENDC))
     input()
     push_to_repository(url)
     print("%s[+]%s Successfully pushed to %s%s%s"%(Colors.OKGREEN, Colors.ENDC, Colors.OKBLUE, url, Colors.ENDC))
