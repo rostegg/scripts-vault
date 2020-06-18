@@ -4,6 +4,8 @@ The installation allows to remember information (name and description of the scr
 
 ## Install
 
+:warning: Before installation script remove `~/.bash_aliases` file. 
+
 ```
 git clone https://github.com/rostegg/useful-scripts.git useful-scripts
 cd useful-scripts
