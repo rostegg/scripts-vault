@@ -13,7 +13,7 @@ cd useful-scripts
 ```
 Use `commands_list` and `aliases_list` commands.
 
-### Add scrips and aliases
+### Add scripts and aliases
 
 <details><summary><b>Scripts</b></summary>
 <p>
