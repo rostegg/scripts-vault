@@ -13,10 +13,10 @@ cd useful-scripts
 ```
 Use `commands_list` and `aliases_list` commands.
 
-## Add scrips and aliases
+### Add scrips and aliases
 
-### Scripts
-
+<details><summary><b>Scripts</b></summary>
+<p>
 Create in script folder file like `script_name.sh`
 
 First line must be [shebang](https://en.wikipedia.org/wiki/Shebang_(Unix))
@@ -27,10 +27,12 @@ There should be a short description (> 1 line) of the script that you would like
 #   And another line
 #   Usage: script-name args, etc
 ```
+</p>
+</details>
 
-### Aliases
 
-Add alias into `aliases.sh` file between `#<->` and `#>-<` markers.
+<details><summary><b>Aliases</b></summary>
+<p>
 
 Alias must look like:
 ```
@@ -46,3 +48,7 @@ echo "alias alias_name='alias_body'" >> ~/.bash_aliases
 ```
 
 Description must be > 1 line
+
+Add alias into `aliases.sh` file between `#<->` and `#>-<` markers.
+</p>
+</details>
