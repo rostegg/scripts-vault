@@ -1,0 +1,10 @@
+#!/bin/bash
+#   Remove substring from files name
+#   Usage: rmfstr <substring>
+
+#   Copy to /usr/bin and don't forget to make the script executable
+
+for file in $PWD/*
+do
+    mv "${file}" "${file/$1/}" 2>/dev/null
+done
