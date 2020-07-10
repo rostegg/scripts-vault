@@ -1,0 +1,16 @@
+#!/bin/bash
+#   Add CSS to userContent.css file
+#   Usage: add-css-firefox <file_name>
+
+#   Copy to /usr/bin and don't forget to make the script executable
+PROFILE_DIR=~/.mozilla/firefox/$( ls -tr ~/.mozilla/firefox/ | grep -v profiles.ini | tail -1 )
+if [ ! -d  "${PROFILE_DIR}"/chrome ] ; then
+  mkdir -p "${PROFILE_DIR}"/chrome
+fi
+
+CHROME_DIR="${PROFILE_DIR}/chrome"
+mkdir -p $CHROME_DIR
+
+USER_CONTENT_FILE="${CHROME_DIR}/userContent.css"
+
+cat "$1" >> "$USER_CONTENT_FILE"
